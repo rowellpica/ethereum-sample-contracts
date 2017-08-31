@@ -8,15 +8,15 @@ contract VerifiedWallet {
     uint8 creditRating; // a rating based on how financially capable is the owner of the wallet
   }
 
-  address public superuser; // the superuser; one who deployed this contract
-  mapping (address => Wallet) wallets; // the ledger, the table, the mapping of wallets
+  address public superuser; // the superuser; one who deployed this contract; stored in the blockchain
+  mapping (address => Wallet) wallets; // the ledger, the table, the mapping of wallets; stored in the blockchain
 
-  // this is contructor; this function is called on deployment of the contract
+  // this the is contructor; this function is called on deployment of the contract
   function VerifiedWallet() {
     superuser = msg.sender; // the one who deployed the contract serves as the superuser
   }
 
-  // modifier are like inherited functions
+  // modifiers are like inherited functions
   modifier isSuper {
       require(msg.sender == superuser);
       _; // the content of the modified function will be placed in here
@@ -28,7 +28,7 @@ contract VerifiedWallet {
   }
 
   // notice the isSuper modifier
-  // only super user can increese the rating
+  // only super user can increase the rating
   // also verify that the wallet is registered
   function increaseIdentityRating(address wallet, uint8 unit) isSuper {
     Wallet storage w = wallets[wallet];
@@ -39,7 +39,7 @@ contract VerifiedWallet {
   }
 
   // notice the isSuper modifier
-  // only super user can increese the rating
+  // only super user can increase the rating
   // also verify that the wallet is registered
   function increaseCreditRating(address wallet, uint8 unit) isSuper {
     Wallet storage w = wallets[wallet];
@@ -49,7 +49,7 @@ contract VerifiedWallet {
     w.identityRating += unit;
   }
 
-  // anyone can check the identity rating
+  // anyone can check the identity rating (as long as they pay the transaction fee)
   function checkIdentityRating(address wallet, uint8 limit) returns (bool) {
     Wallet storage w = wallets[wallet];
     if (!w.registered) {
@@ -58,7 +58,7 @@ contract VerifiedWallet {
     return w.identityRating >= limit;
   }
 
-  // anyone can check the identity rating
+  // anyone can check the credit rating (as long as they pay the transaction fee)
   function checkCreditRating(address wallet, uint8 limit) returns (bool) {
     Wallet storage w = wallets[wallet];
     if (!w.registered) {
